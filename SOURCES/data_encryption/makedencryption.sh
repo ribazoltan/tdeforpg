@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 #data_encryption module build script
 
 TDEVERSION=1.2.1.0
@@ -13,36 +13,13 @@ CDIR=`pwd`
 rm -f Makefile
 cp Makefile.in Makefile
 
-#set path from Makefile if SPATH is not set
+# set path from Makefile if SPATH is not set
 if [ -z $SPATH ];
 then
   SPATH=`cat Makefile |grep ^PGSQL_SRC_PATH|cut -f3 -d" "`
 fi
 
 PGCRYPTO_PATH=${SPATH}/contrib/pgcrypto
-
-############  build pgcrypto  ###########
-# prepare support aes-ni pgcrypto for PostgreSQL 9.6, 9.5 with back-port source
-if [ "$PGVERSION" -eq "96" \
-	-o "$PGVERSION" -eq "95"  ]; then
-	
-	if [ -d ${PGCRYPTO_PATH}.bk ]; then
-		# may be it was interrupted in previous time. Do nothing
-		:
-	else
-		# backup original pgcrypto
-		cp ${PGCRYPTO_PATH} ${PGCRYPTO_PATH}.bk -rf
-	fi
-
-	# if not already fixed
-	if [ ! -f ${PGCRYPTO_PATH}/aes-ni-fixed ]; then
-		# back-port
-		cp  ${CURR_PATH}/${AESNI}/openssl.c ${PGCRYPTO_PATH}/ -f
-		cd ${PGCRYPTO_PATH}
-		patch < ${CURR_PATH}/${AESNI}/pgp-encrypt.patch
-		touch ${PGCRYPTO_PATH}/aes-ni-fixed
-	fi
-fi
 
 # build pgcrypto
 cd ${PGCRYPTO_PATH}
@@ -59,7 +36,7 @@ fi
 
 cd ${CDIR}
 
-#build data_encryption
+# build data_encryption
 make clean
 make PGSQL_SRC_PATH=${SPATH}
 mv data_encryption.so data_encryption${PGVERSION}.so.${TDEVERSION}
