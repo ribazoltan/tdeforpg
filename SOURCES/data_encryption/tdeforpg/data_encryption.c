@@ -720,7 +720,7 @@ enc_store_key_info(PG_FUNCTION_ARGS)
 	/* set current key information */
 	newest_key_info = create_key_info(key, algorithm);
 
-	PG_RETURN_BOOL(TRUE);
+	PG_RETURN_BOOL(1);
 }
 
 /*
@@ -744,7 +744,7 @@ enc_store_old_key_info(PG_FUNCTION_ARGS)
 	/* set old key information */
 	old_key_info = create_key_info(key, algorithm);
 
-	PG_RETURN_BOOL(TRUE);
+	PG_RETURN_BOOL(1);
 }
 
 
@@ -758,9 +758,9 @@ enc_drop_key_info(PG_FUNCTION_ARGS)
 {
 	if(drop_key_info(newest_key_info)){
 		newest_key_info = NULL;
-		PG_RETURN_BOOL(TRUE);
+		PG_RETURN_BOOL(1);
 	}
-	PG_RETURN_BOOL(FALSE);
+	PG_RETURN_BOOL(0);
 }
 
 
@@ -777,9 +777,9 @@ enc_drop_old_key_info(PG_FUNCTION_ARGS)
 {
 	if(drop_key_info(old_key_info)){
 		old_key_info = NULL;
-		PG_RETURN_BOOL(TRUE);
+		PG_RETURN_BOOL(1);
 	}
-	PG_RETURN_BOOL(FALSE);
+	PG_RETURN_BOOL(0);
 }
 
 /*
@@ -807,21 +807,21 @@ enc_rename_backupfile(PG_FUNCTION_ARGS)
 			/* remove older backup */
 			if (remove(old_filepath) != 0) {
 				/* returns false if removing older backcup is failed */
-				PG_RETURN_BOOL(FALSE);
+				PG_RETURN_BOOL(0);
 			}
 		}
 
 		/* rename backup file */
 		if (rename(new_filepath, old_filepath) != 0) {
 			/* returns false if renaming arg0 to arg1 is failed */
-			PG_RETURN_BOOL(FALSE);
+			PG_RETURN_BOOL(0);
 		}
 	}
 
 	pfree(new_filepath);
 	pfree(old_filepath);
 
-	PG_RETURN_BOOL(TRUE);
+	PG_RETURN_BOOL(1);
 
 }
 
